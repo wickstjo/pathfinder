@@ -44,17 +44,15 @@ public class Backend {
         add_child("lahti", "kuopio");
     }
     
-    // ADD NODE
+    // ADD PARENT NODE
     private void add_node(String _name, double _longitude, double _latitude) {
         
-        // CREATE NEW NODE INSTANCE
-        Node node = new Node(_longitude, _latitude);
-        
-        // PUSH IT INTO THE CONTAINER
+        // CREATE NEW NODE INSTANCE & PUSH IT
+        Node node = new Node(_name, _longitude, _latitude);
         this.nodes.put(_name, node);
     }
     
-    // ADD A NODE CHILD
+    // ADD CHILD NODE
     private void add_child(String _parent, String _child) {
         
         // FETCH REQUESTED NODES
@@ -62,10 +60,10 @@ public class Backend {
         Node child_node = get_node(_child);
         
         // ADD THE NODE CHILD
-        parent_node.add_waypoint(_child, child_node);
+        parent_node.add_waypoint(child_node);
     }
     
     // GETTERS
-    public Node get_node(String _name) { return nodes.get(_name); }
     public HashMap<String, Node> get_nodes() { return this.nodes; }
+    public Node get_node(String _name) { return this.nodes.get(_name); }
 }

@@ -1,11 +1,10 @@
 package pathfinder;
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Scanner;
 
 public class UI {
     
     // FETCH ASSIST MODULES
-    private final Scanner scan = new Scanner(System.in);
     Backend backend;
     
     // CONSTRUCTOR
@@ -28,11 +27,11 @@ public class UI {
             log(parent_city.toUpperCase());
             
             // FETCH THE CHILD NODES
-            HashMap<String, Node> child_nodes = parent_node.waypoints();
+            ArrayList<Node> child_nodes = parent_node.get_waypoints();
             
             // LOOP THROUGH THE CHILDREN & PRINT ITS NAME
-            for (String child_city : child_nodes.keySet()) {
-                log("\u00A0\u00A0> " + child_city.toUpperCase());
+            for (Node child_node : child_nodes) {
+                log("\u00A0\u00A0> " + child_node.get_name().toUpperCase());
             }
             
             // LOG AN EMPTY LINE FOR AESTHETICAL PURPOSES
