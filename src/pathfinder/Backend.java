@@ -42,6 +42,9 @@ public class Backend {
         add_child("lahti", "helsinki");
         add_child("lahti", "tampere");
         add_child("lahti", "kuopio");
+        
+        // ADD JYVASKYLA CHILDREN
+        add_child("jyvaskyla", "tampere");
     }
     
     // ADD PARENT NODE

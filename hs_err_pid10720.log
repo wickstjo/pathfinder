@@ -1,0 +1,126 @@
+#
+# There is insufficient memory for the Java Runtime Environment to continue.
+# Native memory allocation (malloc) failed to allocate 480104 bytes for AllocateHeap
+# Possible reasons:
+#   The system is out of physical RAM or swap space
+#   In 32 bit mode, the process size limit was hit
+# Possible solutions:
+#   Reduce memory load on the system
+#   Increase physical memory or swap space
+#   Check if swap backing store is full
+#   Use 64 bit Java on a 64 bit OS
+#   Decrease Java heap size (-Xmx/-Xms)
+#   Decrease number of Java threads
+#   Decrease Java thread stack sizes (-Xss)
+#   Set larger code cache with -XX:ReservedCodeCacheSize=
+# This output file may be truncated or incomplete.
+#
+#  Out of Memory Error (memory/allocation.inline.hpp:61), pid=10720, tid=0x0000000000001974
+#
+# JRE version:  (8.0_141-b15) (build )
+# Java VM: Java HotSpot(TM) 64-Bit Server VM (25.141-b15 mixed mode windows-amd64 compressed oops)
+# Failed to write core dump. Minidumps are not enabled by default on client versions of Windows
+#
+
+---------------  T H R E A D  ---------------
+
+Current thread (0x0000000002030800):  JavaThread "Unknown thread" [_thread_in_vm, id=6516, stack(0x00000000007d0000,0x00000000008d0000)]
+
+Stack: [0x00000000007d0000,0x00000000008d0000]
+[error occurred during error reporting (printing stack bounds), id 0xc0000005]
+
+Native frames: (J=compiled Java code, j=interpreted, Vv=VM code, C=native code)
+
+
+---------------  P R O C E S S  ---------------
+
+Java Threads: ( => current thread )
+
+Other Threads:
+
+=>0x0000000002030800 (exited) JavaThread "Unknown thread" [_thread_in_vm, id=6516, stack(0x00000000007d0000,0x00000000008d0000)]
+
+VM state:not at safepoint (not fully initialized)
+
+VM Mutex/Monitor currently owned by a thread: None
+
+GC Heap History (0 events):
+No events
+
+Deoptimization events (0 events):
+No events
+
+Internal exceptions (0 events):
+No events
+
+Events (0 events):
+No events
+
+
+Dynamic libraries:
+0x00007ff6b0c60000 - 0x00007ff6b0c97000 	C:\Users\jfwickstr\Desktop\prog\Java\jdk1.8.0_141\bin\java.exe
+0x00007ffa55a90000 - 0x00007ffa55c3d000 	C:\WINDOWS\SYSTEM32\ntdll.dll
+0x00007ffa53cb0000 - 0x00007ffa53dee000 	C:\WINDOWS\system32\KERNEL32.DLL
+0x00007ffa53000000 - 0x00007ffa53116000 	C:\WINDOWS\system32\KERNELBASE.dll
+0x00007ffa51780000 - 0x00007ffa5180e000 	C:\WINDOWS\system32\apphelp.dll
+0x00007ffa3c1d0000 - 0x00007ffa3c224000 	C:\WINDOWS\AppPatch\AppPatch64\AcGenral.DLL
+0x00007ffa532f0000 - 0x00007ffa5339a000 	C:\WINDOWS\system32\msvcrt.dll
+0x00007ffa52d40000 - 0x00007ffa52d6e000 	C:\WINDOWS\system32\SspiCli.dll
+0x00007ffa53a80000 - 0x00007ffa53ad4000 	C:\WINDOWS\system32\SHLWAPI.dll
+0x00007ffa54000000 - 0x00007ffa54177000 	C:\WINDOWS\system32\USER32.dll
+0x00007ffa538e0000 - 0x00007ffa53a74000 	C:\WINDOWS\system32\ole32.dll
+0x00007ffa54550000 - 0x00007ffa55a7b000 	C:\WINDOWS\system32\SHELL32.dll
+0x00007ffa521f0000 - 0x00007ffa52211000 	C:\WINDOWS\SYSTEM32\USERENV.dll
+0x00007ffa54290000 - 0x00007ffa5433a000 	C:\WINDOWS\system32\ADVAPI32.dll
+0x00007ffa49b20000 - 0x00007ffa49b3e000 	C:\WINDOWS\SYSTEM32\MPR.dll
+0x00007ffa53b00000 - 0x00007ffa53c40000 	C:\WINDOWS\system32\RPCRT4.dll
+0x00007ffa53c40000 - 0x00007ffa53c99000 	C:\WINDOWS\SYSTEM32\sechost.dll
+0x00007ffa54340000 - 0x00007ffa54550000 	C:\WINDOWS\SYSTEM32\combase.dll
+0x00007ffa53eb0000 - 0x00007ffa53ffc000 	C:\WINDOWS\system32\GDI32.dll
+0x00007ffa52bc0000 - 0x00007ffa52bd5000 	C:\WINDOWS\SYSTEM32\profapi.dll
+0x00007ffa516c0000 - 0x00007ffa51772000 	C:\WINDOWS\SYSTEM32\SHCORE.dll
+0x00007ffa54250000 - 0x00007ffa54286000 	C:\WINDOWS\system32\IMM32.DLL
+0x00007ffa53400000 - 0x00007ffa53551000 	C:\WINDOWS\system32\MSCTF.dll
+0x00007ffa50920000 - 0x00007ffa50b9b000 	C:\WINDOWS\WinSxS\amd64_microsoft.windows.common-controls_6595b64144ccf1df_6.0.9600.18006_none_623f33d3ecbe86e8\COMCTL32.dll
+0x000000005e090000 - 0x000000005e162000 	C:\Users\jfwickstr\Desktop\prog\Java\jdk1.8.0_141\jre\bin\msvcr100.dll
+0x000000005e170000 - 0x000000005ea0d000 	C:\Users\jfwickstr\Desktop\prog\Java\jdk1.8.0_141\jre\bin\server\jvm.dll
+0x00007ffa4a800000 - 0x00007ffa4a809000 	C:\WINDOWS\SYSTEM32\WSOCK32.dll
+0x00007ffa4ef00000 - 0x00007ffa4ef22000 	C:\WINDOWS\SYSTEM32\WINMM.dll
+0x00007ffa50670000 - 0x00007ffa5067a000 	C:\WINDOWS\SYSTEM32\VERSION.dll
+0x00007ffa532e0000 - 0x00007ffa532e7000 	C:\WINDOWS\system32\PSAPI.DLL
+0x00007ffa533a0000 - 0x00007ffa533fa000 	C:\WINDOWS\system32\WS2_32.dll
+0x00007ffa4eed0000 - 0x00007ffa4eefa000 	C:\WINDOWS\SYSTEM32\WINMMBASE.dll
+0x00007ffa53ca0000 - 0x00007ffa53ca9000 	C:\WINDOWS\system32\NSI.dll
+0x00007ffa52c90000 - 0x00007ffa52cdf000 	C:\WINDOWS\SYSTEM32\cfgmgr32.dll
+0x00007ffa519d0000 - 0x00007ffa519f8000 	C:\WINDOWS\SYSTEM32\DEVOBJ.dll
+0x000000005e040000 - 0x000000005e04f000 	C:\Users\jfwickstr\Desktop\prog\Java\jdk1.8.0_141\jre\bin\verify.dll
+0x000000005e010000 - 0x000000005e039000 	C:\Users\jfwickstr\Desktop\prog\Java\jdk1.8.0_141\jre\bin\java.dll
+0x000000005dff0000 - 0x000000005e006000 	C:\Users\jfwickstr\Desktop\prog\Java\jdk1.8.0_141\jre\bin\zip.dll
+
+VM Arguments:
+jvm_args: -Dfile.encoding=UTF-8 
+java_command: pathfinder.Pathfinder
+java_class_path (initial): C:\Users\jfwickstr\Desktop\prog\java_dev\Pathfinder\build\classes
+Launcher Type: SUN_STANDARD
+
+Environment Variables:
+PATH=C:\ProgramData\Oracle\Java\javapath;C:\Program Files (x86)\Intel\iCLS Client\;C:\Program Files\Intel\iCLS Client\;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0\;C:\Program Files\Intel\Intel(R) Management Engine Components\DAL;C:\Program Files\Intel\Intel(R) Management Engine Components\IPT;C:\Program Files (x86)\Intel\Intel(R) Management Engine Components\DAL;C:\Program Files (x86)\Intel\Intel(R) Management Engine Components\IPT;C:\Program Files (x86)\NVIDIA Corporation\PhysX\Common;C:\Program Files (x86)\GtkSharp\2.12\bin;C:\Users\jfwickstr\Desktop\prog\vscode\Microsoft VS Code\bin;C:\Users\jfwickstr\Desktop\prog\nodejs\;C:\Users\jfwickstr\Desktop\prog\putty\;C:\Users\jfwickstr\AppData\Local\GitHubDesktop\bin;C:\Users\jfwickstr\Desktop\prog\vscode\Microsoft VS Code\bin;C:\Users\jfwickstr\AppData\Roaming\npm;C:\Users\jfwickstr\AppData\Local\Programs\Microsoft VS Code\bin;C:\Users\jfwickstr\Desktop\prog\OpenVPN\bin
+USERNAME=jfwickstr
+OS=Windows_NT
+PROCESSOR_IDENTIFIER=Intel64 Family 6 Model 60 Stepping 3, GenuineIntel
+
+
+
+---------------  S Y S T E M  ---------------
+
+OS: Windows 8.1 , 64 bit Build 9600 (6.3.9600.17415)
+
+CPU:total 4 (initial active 4) (4 cores per cpu, 1 threads per core) family 6 model 60 stepping 3, cmov, cx8, fxsr, mmx, sse, sse2, sse3, ssse3, sse4.1, sse4.2, popcnt, avx, avx2, aes, clmul, erms, lzcnt, tsc, tscinvbit, bmi1, bmi2
+
+Memory: 4k page, physical 16715084k(3801380k free), swap 19860812k(5128k free)
+
+vm_info: Java HotSpot(TM) 64-Bit Server VM (25.141-b15) for windows-amd64 JRE (1.8.0_141-b15), built on Jul 12 2017 04:25:12 by "java_re" with MS VC++ 10.0 (VS2010)
+
+time: Wed Feb 13 14:35:16 2019
+elapsed time: 0 seconds (0d 0h 0m 0s)
+
