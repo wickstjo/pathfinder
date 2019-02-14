@@ -8,9 +8,8 @@ public class Node {
     private final double longitude;
     private final double latitude;
     
-    // MOST RECENT FCOST
+    // FCOST
     private double cost;
-    private Node previous;
     
     // CONNECTED WAYPOINTS
     private ArrayList<Node> waypoints = new ArrayList<>();
@@ -34,8 +33,4 @@ public class Node {
     // COST GETTER/SETTER
     public double get_cost() { return this.cost; }
     public void set_cost(double _value) { this.cost = _value; }
-    
-    // NEXT GETTER/SETTER
-    public Node get_previous() { return this.previous; }
-    public void set_previous(Node _value) { this.previous = _value; }
 }

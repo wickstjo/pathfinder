@@ -1,7 +1,7 @@
 package pathfinder;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.PriorityQueue;
 
 public class Route {
@@ -10,10 +10,6 @@ public class Route {
     Node beginning;
     Node end;
     
-    // INITIALIZE NODE QUEUE & BLACKLIST
-    PriorityQueue<Node> queue = new PriorityQueue(new compare()); 
-    ArrayList<Node> blacklist = new ArrayList();
-    
     // CONSTRUCTOR
     public Route(Backend _backend, String _from, String _to) {
         
@@ -21,8 +17,7 @@ public class Route {
         this.beginning = _backend.get_node(_from);
         this.end = _backend.get_node(_to);
         
-        // ADD THE STARTING NODE TO THE QUEUE & FIND THE ROUTE
-        queue.add(this.beginning);
+        // START THE PATHFINGINDER
         find_route();
     }
     
@@ -31,73 +26,98 @@ public class Route {
     
     // START THE ROUTING PROCESS
     private void find_route() {
+
+        // INITIALIZE THE NECESSARY COMPONENTS
+        PriorityQueue<Node> queue = new PriorityQueue(new compare()); 
+        ArrayList<Node> blacklist = new ArrayList();
+        ArrayList<Node> route = new ArrayList();
+        HashMap<Node, Double> g_costs = new HashMap<>();
+        HashMap<Node, Double> f_costs = new HashMap<>();
         
-        // KEEP TRACK OF LAST PARENT
-        Node last_node = null;
+        Double check;
+        
+        // SET THE COSTS FOR FIRST NODE
+        g_costs.put(this.beginning, 0.0);
+        f_costs.put(this.beginning, distance(this.beginning, this.end));
+        
+        // SET THE FIRST NODE INTO THE QUEUE
+        queue.add(this.beginning);
         
         // LOOP UNTIL THE QUEUE IS EMPTY
-        while (!this.queue.isEmpty()) {
+        while (!queue.isEmpty()) {
             
-            // SHORTHAND FOR PARENT NODE
-            Node parent_node = this.queue.poll();
+            // SELECT NODE WITH LOWEST FCOST, THEN REMOTE IT
+            Node parent_target = queue.poll();
             
-            // BREAK THE LOOP WHEN THE END IS REACHED
-            if (last_node == this.end) { break; }
-            
-            // DO STUFF WITH NODE
-            this.queue.remove(parent_node);
-            this.blacklist.add(parent_node);
-            
-            if (last_node != null) {
-                parent_node.set_previous(last_node);
-                
-                //if (parent_node.get_cost() < parent_node.get_previous().get_cost() && parent_node != this.end) {
-                //    log(parent_node.get_name());
-                //}
+            // BREAK THE LOOP IF ITS THE GOAL
+            if (parent_target == this.end) {
+                summary(route);
+                break;
             }
+            
+            // BLACKLIST IT
+            blacklist.add(parent_target);
             
             // FETCH ITS CHILD NODES
-            ArrayList<Node> child_nodes = parent_node.get_waypoints();
-
-            // LOOP THROUGH
-            for (Node target : child_nodes) {
-
-                // IF THE NODE HASNT BEEN VISITED BEFORE
-                if (blacklisted(target) == false) {
-
-                    // FIND COSTS
-                    double g_cost = distance(target, this.beginning);
-                    double h_cost = distance(target, this.end);
-                    double f_cost = g_cost + h_cost;
-
-                    // SET THE FCOST & ADD NODE TO THE QUEUE
-                    target.set_cost(f_cost);
-                    queue.add(target);
+            ArrayList<Node> child_nodes = parent_target.get_waypoints();
+            
+            // LOOP THROUGH THEM
+            for (Node child_target : child_nodes) {
+                
+                // CHECK IF THE CHILD IS BLACKLISTED
+                if (blacklist.contains(child_target) == false) {
+                       
+                    // CHECK FOR NULL
+                    check = check(g_costs.get(parent_target));
+                    
+                    // CALCULATE THE TENTATIVE COST
+                    double tentative_cost = check + distance(parent_target, child_target);
+                    
+                    // CHECK FOR NULL
+                    check = check(g_costs.get(child_target));
+                    
+                    // IF THE CHILD ISNT ALREADY QUEUED
+                    if (queue.contains(child_target) == false) {
+                        
+                        // FIND & INJECT THE FCOST TO THE NODE
+                        double f_cost = distance(child_target, this.beginning) + distance(child_target, this.end);
+                        child_target.set_cost(f_cost);
+                        
+                        // ADD IT TO THE QUEUE
+                        queue.add(child_target);
+                        
+                    // IF IT IS QUEUED
+                    } else if(tentative_cost >= check) {
+                        
+                        route.add(parent_target);
+                        g_costs.replace(child_target, tentative_cost);
+                        
+                        // CHECK FOR NULL
+                        check = check(g_costs.get(child_target));
+                        
+                        double foo = check + distance(child_target, this.end);
+                        f_costs.put(child_target, foo);
+                    }
                 }
             }
-            
-            // KEEP TRACK OF LAST PARSED NODE
-            last_node = parent_node;
         }
-        
-        summary();
     }
     
-    private void summary() {
+    private Double check(Double foo) {
         
-        ArrayList<String> path = new ArrayList();
-        path.add(this.end.get_name()); 
+        Double value = foo;
         
-        Node target = this.end.get_previous();
-
-        while (target != null) {
-            path.add(target.get_name());
-            target = target.get_previous();
+        if (foo == null) {
+            value = 10000000.00;
         }
         
-        Collections.reverse(path);
-        
-        log(path);
+        return value;
+    }
+    
+    private void summary(ArrayList<Node> route) {
+        for (Node node : route) {
+            log(node.get_name());
+        }
     }
     
     // FIND KM DISTANCE BETWEEN TWO NODES
@@ -125,8 +145,6 @@ public class Route {
     
     // CONVERT COORDINATE TO RADIAN
     private double to_radian(double _value) { return _value * Math.PI / 180.0; }
-    
-    private boolean blacklisted(Node _target) { return this.blacklist.contains(_target); }
     
     // SORT PRIORITY QUEUE
     class compare implements Comparator<Node> {
