@@ -10,12 +10,18 @@ public class Route {
     Node beginning;
     Node end;
     
+    // TEMPLATE HASHMAP FOR ROUTING
+    HashMap<Node, Double> template;
+    
     // CONSTRUCTOR
     public Route(Backend _backend, String _from, String _to) {
         
         // FIND & SET FIRST & LAST NODES
         this.beginning = _backend.get_node(_from);
         this.end = _backend.get_node(_to);
+        
+        // GENERATE TEMPLATE HASHMAP
+        this.template = _backend.generate_template();
         
         // START THE PATHFINGINDER
         find_route();
@@ -27,14 +33,14 @@ public class Route {
     // START THE ROUTING PROCESS
     private void find_route() {
 
-        // INITIALIZE THE NECESSARY COMPONENTS
+        // INITIALIZE CORE COMPONENTS
         PriorityQueue<Node> queue = new PriorityQueue(new compare()); 
         ArrayList<Node> blacklist = new ArrayList();
-        ArrayList<Node> route = new ArrayList();
-        HashMap<Node, Double> g_costs = new HashMap<>();
-        HashMap<Node, Double> f_costs = new HashMap<>();
         
-        Double check;
+        // INITIALIZE HASHMAPS
+        HashMap<Node, Node> route = new HashMap();
+        HashMap<Node, Double> g_costs = this.template;
+        HashMap<Node, Double> f_costs = this.template;
         
         // SET THE COSTS FOR FIRST NODE
         g_costs.put(this.beginning, 0.0);
@@ -65,19 +71,13 @@ public class Route {
             for (Node child_target : child_nodes) {
                 
                 // CHECK IF THE CHILD IS BLACKLISTED
-                if (blacklist.contains(child_target) == false) {
-                       
-                    // CHECK FOR NULL
-                    check = check(g_costs.get(parent_target));
+                if (!blacklist.contains(child_target)) {
                     
                     // CALCULATE THE TENTATIVE COST
-                    double tentative_cost = check + distance(parent_target, child_target);
-                    
-                    // CHECK FOR NULL
-                    check = check(g_costs.get(child_target));
+                    double tentative_cost = g_costs.get(parent_target) + distance(parent_target, child_target);
                     
                     // IF THE CHILD ISNT ALREADY QUEUED
-                    if (queue.contains(child_target) == false) {
+                    if (!queue.contains(child_target)) {
                         
                         // FIND & INJECT THE FCOST TO THE NODE
                         double f_cost = distance(child_target, this.beginning) + distance(child_target, this.end);
@@ -87,36 +87,33 @@ public class Route {
                         queue.add(child_target);
                         
                     // IF IT IS QUEUED
-                    } else if(tentative_cost >= check) {
+                    } else if(tentative_cost >= g_costs.get(child_target)) {
                         
-                        route.add(parent_target);
+                        // REPLACE THE OLD ROUTE VALUE
+                        if (route.containsKey(child_target)) { route.replace(child_target, parent_target);
+                        
+                        // INJECT NEW
+                        } else { route.put(child_target, parent_target); }
+                        
+                        // REPLACE OLD G/F VALUES
                         g_costs.replace(child_target, tentative_cost);
-                        
-                        // CHECK FOR NULL
-                        check = check(g_costs.get(child_target));
-                        
-                        double foo = check + distance(child_target, this.end);
-                        f_costs.put(child_target, foo);
+                        f_costs.replace(child_target, g_costs.get(child_target) + distance(child_target, this.end));
                     }
                 }
             }
         }
     }
     
-    private Double check(Double foo) {
+    private void summary(HashMap<Node, Node> route) {
         
-        Double value = foo;
-        
-        if (foo == null) {
-            value = 10000000.00;
+        for (Node node : route.keySet()) {
+           log(node.get_name());
         }
         
-        return value;
-    }
-    
-    private void summary(ArrayList<Node> route) {
-        for (Node node : route) {
-            log(node.get_name());
+        log("---");
+        
+        for (Node node : route.values()) {
+           log(node.get_name());
         }
     }
     

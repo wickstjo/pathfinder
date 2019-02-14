@@ -66,6 +66,19 @@ public class Backend {
         parent_node.add_waypoint(child_node);
     }
     
+    // GENERATE A GENERIC HASHMAP FOR ASTAR
+    public HashMap<Node, Double> generate_template() {
+        
+        HashMap<Node, Double> temp = new HashMap<>();
+        
+        for (Node node : this.nodes.values()) {
+            
+            temp.put(node, Double.POSITIVE_INFINITY);
+        }
+        
+        return temp;
+    }
+    
     // GETTERS
     public HashMap<String, Node> get_nodes() { return this.nodes; }
     public Node get_node(String _name) { return this.nodes.get(_name); }
