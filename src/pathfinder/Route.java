@@ -27,9 +27,6 @@ public class Route {
         find_route();
     }
     
-    // SHORTHAND FOR DEBUGGING
-    private void log(Object content) { System.out.println(content); }
-    
     // START THE ROUTING PROCESS
     private void find_route() {
 
@@ -46,7 +43,7 @@ public class Route {
         g_costs.put(this.beginning, 0.0);
         f_costs.put(this.beginning, distance(this.beginning, this.end));
         
-        // SET THE FIRST NODE INTO THE QUEUE
+        // ADD THE FIRST NODE TO THE QUEUE
         queue.add(this.beginning);
         
         // LOOP UNTIL THE QUEUE IS EMPTY
@@ -57,7 +54,7 @@ public class Route {
             
             // BREAK THE LOOP IF ITS THE GOAL
             if (parent_target == this.end) {
-                summary(route);
+                //summary(route);
                 break;
             }
             
@@ -85,9 +82,10 @@ public class Route {
                         
                         // ADD IT TO THE QUEUE
                         queue.add(child_target);
+                        log(child_target.get_name());
                         
                     // IF IT IS QUEUED
-                    } else if(tentative_cost >= g_costs.get(child_target)) {
+                    } else if (tentative_cost >= g_costs.get(child_target)) {
                         
                         // REPLACE THE OLD ROUTE VALUE
                         if (route.containsKey(child_target)) { route.replace(child_target, parent_target);
@@ -104,18 +102,8 @@ public class Route {
         }
     }
     
-    private void summary(HashMap<Node, Node> route) {
-        
-        for (Node node : route.keySet()) {
-           log(node.get_name());
-        }
-        
-        log("---");
-        
-        for (Node node : route.values()) {
-           log(node.get_name());
-        }
-    }
+    // CONVERT COORDINATE TO RADIAN
+    private double to_radian(double _value) { return _value * Math.PI / 180.0; }
     
     // FIND KM DISTANCE BETWEEN TWO NODES
     private double distance(Node _from, Node _to) {
@@ -140,10 +128,24 @@ public class Route {
         return 6367 * c;
     }
     
-    // CONVERT COORDINATE TO RADIAN
-    private double to_radian(double _value) { return _value * Math.PI / 180.0; }
+    // SHORTHAND FOR DEBUGGING
+    private void log(Object content) { System.out.println(content); }
     
-    // SORT PRIORITY QUEUE
+    // PRINT ROUTE SUMMARY
+    private void summary(HashMap<Node, Node> route) {
+        
+        for (Node node : route.keySet()) {
+           log(node.get_name());
+        }
+        
+        log("---");
+        
+        for (Node node : route.values()) {
+           log(node.get_name());
+        }
+    }
+    
+    // PRIORITY QUEUE SORTER
     class compare implements Comparator<Node> {
 
         // OVERRIDE THE DEFAULT COMPARE METHOD
