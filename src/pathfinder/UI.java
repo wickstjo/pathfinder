@@ -42,8 +42,8 @@ public class UI {
     // ASK FOR USER INPUT
     public void query() {
         
-        String from = "jyvaskyla";
-        String to = "kuopio";
+        String from = "kuopio";
+        String to = "jyvaskyla";
         
         log("FROM:\t" + from);
         log("TO:\t" + to + "\n");

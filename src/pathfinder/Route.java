@@ -8,7 +8,7 @@ public class Route {
     
     // ROUTE START/FINISH
     Node beginning;
-    Node end;
+    Node ending;
     
     // TEMPLATE HASHMAP FOR ROUTING
     HashMap<Node, Double> template;
@@ -18,7 +18,7 @@ public class Route {
         
         // FIND & SET FIRST & LAST NODES
         this.beginning = _backend.get_node(_from);
-        this.end = _backend.get_node(_to);
+        this.ending = _backend.get_node(_to);
         
         // GENERATE TEMPLATE HASHMAP
         this.template = _backend.generate_template();
@@ -41,7 +41,7 @@ public class Route {
         
         // SET THE COSTS FOR FIRST NODE
         g_costs.put(this.beginning, 0.0);
-        f_costs.put(this.beginning, distance(this.beginning, this.end));
+        f_costs.put(this.beginning, distance(this.beginning, this.ending));
         
         // ADD THE FIRST NODE TO THE QUEUE
         queue.add(this.beginning);
@@ -53,8 +53,8 @@ public class Route {
             Node parent_target = queue.poll();
             
             // BREAK THE LOOP IF ITS THE GOAL
-            if (parent_target == this.end) {
-                //summary(route);
+            if (parent_target == this.ending) {
+                summary(route);
                 break;
             }
             
@@ -77,12 +77,15 @@ public class Route {
                     if (!queue.contains(child_target)) {
                         
                         // FIND & INJECT THE FCOST TO THE NODE
-                        double f_cost = distance(child_target, this.beginning) + distance(child_target, this.end);
-                        child_target.set_cost(f_cost);
+                        double f_cost = distance(child_target, this.beginning) + distance(child_target, this.ending);
+                        child_target.set_cost(tentative_cost);
+                        
+                        log(f_cost);
+                        log(tentative_cost);
                         
                         // ADD IT TO THE QUEUE
                         queue.add(child_target);
-                        log(child_target.get_name());
+                        //log(child_target.get_name());
                         
                     // IF IT IS QUEUED
                     } else if (tentative_cost >= g_costs.get(child_target)) {
@@ -95,7 +98,7 @@ public class Route {
                         
                         // REPLACE OLD G/F VALUES
                         g_costs.replace(child_target, tentative_cost);
-                        f_costs.replace(child_target, g_costs.get(child_target) + distance(child_target, this.end));
+                        f_costs.replace(child_target, g_costs.get(child_target) + distance(child_target, this.ending));
                     }
                 }
             }
@@ -133,15 +136,16 @@ public class Route {
     
     // PRINT ROUTE SUMMARY
     private void summary(HashMap<Node, Node> route) {
+  
+//        Node target = this.beginning;
+//        
+//        while (target != this.ending) {
+//            target = route.get(target);
+//            log(target.get_name());
+//        }
         
         for (Node node : route.keySet()) {
-           log(node.get_name());
-        }
-        
-        log("---");
-        
-        for (Node node : route.values()) {
-           log(node.get_name());
+           log(node.get_name() + " => " + route.get(node).get_name());
         }
     }
     
