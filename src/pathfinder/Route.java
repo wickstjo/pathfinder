@@ -7,11 +7,14 @@ import java.util.PriorityQueue;
 public class Route {
     
     // ROUTE START/FINISH
-    Node beginning;
-    Node ending;
+    private final Node beginning;
+    private final Node ending;
     
     // TEMPLATE HASHMAP FOR ROUTING
-    HashMap<Node, Double> template;
+    private final HashMap<Node, Double> template;
+    
+    // THE FINALIZED ROUTE
+    private final ArrayList<String> finalized = new ArrayList();
     
     // CONSTRUCTOR
     public Route(Backend _backend, String _from, String _to) {
@@ -77,28 +80,27 @@ public class Route {
                     if (!queue.contains(child_target)) {
                         
                         // FIND & INJECT THE FCOST TO THE NODE
-                        double f_cost = distance(child_target, this.beginning) + distance(child_target, this.ending);
                         child_target.set_cost(tentative_cost);
-                        
-                        log(f_cost);
-                        log(tentative_cost);
                         
                         // ADD IT TO THE QUEUE
                         queue.add(child_target);
-                        //log(child_target.get_name());
                         
                     // IF IT IS QUEUED
                     } else if (tentative_cost >= g_costs.get(child_target)) {
                         
-                        // REPLACE THE OLD ROUTE VALUE
-                        if (route.containsKey(child_target)) { route.replace(child_target, parent_target);
-                        
-                        // INJECT NEW
-                        } else { route.put(child_target, parent_target); }
+                        // ADD IT TO THE ROUTE MAP
+                        route.put(child_target, parent_target);
                         
                         // REPLACE OLD G/F VALUES
-                        g_costs.replace(child_target, tentative_cost);
-                        f_costs.replace(child_target, g_costs.get(child_target) + distance(child_target, this.ending));
+                        g_costs.put(child_target, tentative_cost);
+                        f_costs.put(child_target, g_costs.get(child_target) + distance(child_target, this.ending));
+                        
+                        // https://github.com/phishman3579/java-algorithms-implementation/blob/master/src/com/jwetherell/algorithms/graph/AStar.java
+                        
+                        // REMOVE NODE FROM QUEUE, THEN REMOVE & INJECT IT AGAIN WITH THE NEW FCOST
+                        queue.remove(child_target);
+                        child_target.set_cost(f_costs.get(child_target));
+                        queue.add(child_target);
                     }
                 }
             }
@@ -131,23 +133,22 @@ public class Route {
         return 6367 * c;
     }
     
-    // SHORTHAND FOR DEBUGGING
-    private void log(Object content) { System.out.println(content); }
-    
     // PRINT ROUTE SUMMARY
     private void summary(HashMap<Node, Node> route) {
   
-//        Node target = this.beginning;
-//        
-//        while (target != this.ending) {
-//            target = route.get(target);
-//            log(target.get_name());
-//        }
-        
+        // ADD THE FIRST NODE TO THE FINALIZED LIST
+        finalized.add(this.beginning.get_name());
+           
+        // ADD THE GENERATED NODES
         for (Node node : route.keySet()) {
-           log(node.get_name() + " => " + route.get(node).get_name());
+           finalized.add(node.get_name());
         }
+        
+        // ADD THE LAST NODE
+        finalized.add(this.ending.get_name());
     }
+
+    public ArrayList<String> get_path() { return this.finalized; }
     
     // PRIORITY QUEUE SORTER
     class compare implements Comparator<Node> {

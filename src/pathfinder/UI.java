@@ -42,11 +42,18 @@ public class UI {
     // ASK FOR USER INPUT
     public void query() {
         
-        String from = "kuopio";
-        String to = "jyvaskyla";
+        // START & END NODES
+        String from = "jyvaskyla";
+        String to = "kuopio";
         
+        // LOG THEM FOR CLARITY
         log("FROM:\t" + from);
         log("TO:\t" + to + "\n");
-        Route route = new Route(backend, from, to);
+      
+        // GENERATE A ROUTE & FETCH IT
+        Route route = new Route(backend, from, to); 
+        ArrayList<String> result = route.get_path();
+        
+        log(result);
     }
 }
