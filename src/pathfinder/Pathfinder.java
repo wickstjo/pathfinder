@@ -7,8 +7,8 @@ public class Pathfinder {
         Backend backend = new Backend();
         UI ui = new UI(backend);
         
-        // SHOW THE EXISTING NODES & CHILDREN
-        ui.render_nodes();
+        // SHOW THE EXISTING NODES & ASK FOR A ROUTE TO SOLVE
+        ui.list_nodes();
         ui.query();
     }
 }

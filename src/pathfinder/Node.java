@@ -17,7 +17,7 @@ public class Node {
 
     // CONSTRUCTOR
     public Node(String _name, double _longitude, double _latitude) {
-        this.name = _name;
+        this.name = _name.toLowerCase();
         this.longitude = _longitude;
         this.latitude = _latitude;
     }

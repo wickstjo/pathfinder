@@ -42,6 +42,7 @@ public class Route {
         this.beginning.set_gcost(gcost);
         this.beginning.set_fcost(gcost + hcost);
         
+        
         // ADD THE FIRST NODE TO THE QUEUE
         queue.add(this.beginning);
         

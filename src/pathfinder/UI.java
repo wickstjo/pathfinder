@@ -1,20 +1,25 @@
 package pathfinder;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Scanner;
 
 public class UI {
     
-    // FETCH ASSIST MODULES
+    // BIND THE BACKEND MODULE
     Backend backend;
+    
+    // FETCH THE SCANNER MODULE
+    private final Scanner scan = new Scanner(System.in);
     
     // CONSTRUCTOR
     public UI(Backend _backend) { this.backend = _backend; }
     
-    // SHORTHAND FOR DEBUGGING
+    // SHORTHANDS FOR LOGGING
     public void log(Object content) { System.out.println(content); }
+    public void error(Object content) { log("\n" + "\u001B[31m" + content + "\u001B[0m" + "\n"); }
     
     // RENDER NODES & CHILDREN
-    public void render_nodes() {
+    public void list_nodes() {
         
         // FETCH THE PARENT NODES
         HashMap<String, Node> parent_nodes = backend.get_nodes();
@@ -34,7 +39,7 @@ public class UI {
                 log("\u00A0\u00A0> " + child_node.get_name().toUpperCase());
             }
             
-            // LOG AN EMPTY LINE FOR AESTHETICAL PURPOSES
+            // ADD AN EXTRA LINEBREAK AFTER EACH BLOCK
             log("");
         }
     }
@@ -42,18 +47,43 @@ public class UI {
     // ASK FOR USER INPUT
     public void query() {
         
-        // START & END NODES
-        String from = "helsinki";
-        String to = "jyvaskyla";
+        // ASK USER TO SPECIFY START & END POINTS
+        String from = question("FROM?");
+        String to = question("\nTO?");
         
         // LOG THEM FOR CLARITY
-        log("FROM:\t" + from);
-        log("TO:\t" + to + "\n");
+        log("\nFROM:\t" + from.toUpperCase());
+        log("TO:\t" + to.toUpperCase() + "\n");
       
         // GENERATE A ROUTE & FETCH IT
         Route route = new Route(backend, from, to); 
         ArrayList<String> result = route.get_result();
         
-        log(result);
+        // LOOP OUT THE RESULTING ARRAYLIST
+        for (int x = 0; x < result.size(); x++) {
+            log((x + 1) + ". " + result.get(x).toUpperCase());
+        }
+    }
+    
+    // ASK A QUESTION
+    private String question(String _question) {
+        
+        // ASK THE QUESTION & SAVE THE ANSWER
+        System.out.print(_question + "\n\u00A0\u00A0> ");
+        String answer = scan.next();
+        
+        // CHECK IF THE REQUESTED CITY EXISTS -- FORCE LOWERCASE
+        boolean check = this.backend.get_nodes().containsKey(answer.toLowerCase());
+        
+        // IF IT DOESNT
+        if (check == false) {
+            
+            // PROMPT ERROR & ASK AGAIN
+            error("CITY NOT FOUND, TRY AGAIN!");
+            answer = question(_question);
+        }
+        
+        // OTHERWISE, RETURN THE ANSWER
+        return answer;
     }
 }
