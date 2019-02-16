@@ -4,17 +4,16 @@ import java.util.ArrayList;
 public class Node {
     
     // NODE DETAILS
-    public final String name;
-    public final double longitude;
-    public final double latitude;
+    private final String name;
+    private final double longitude;
+    private final double latitude;
     
-    public Node previous;
+    // CONNECTED NODES
+    private final ArrayList<Node> children = new ArrayList<>();
     
-    // ROUTE COSTS
-    public double fcost, gcost = Double.POSITIVE_INFINITY;
-    
-    // CONNECTED WAYPOINTS
-    public ArrayList<Node> waypoints = new ArrayList<>();
+    // LATEST COSTS & ITS PREDECESSOR
+    private double fcost, gcost = Double.POSITIVE_INFINITY;
+    private Node previous;
 
     // CONSTRUCTOR
     public Node(String _name, double _longitude, double _latitude) {
@@ -22,4 +21,21 @@ public class Node {
         this.longitude = _longitude;
         this.latitude = _latitude;
     }
+    
+    // GENERIC SETTERS
+    public void set_previous(Node node) { this.previous = node; }
+    public void set_fcost(double cost) { this.fcost = cost; }
+    public void set_gcost(double cost) { this.gcost = cost; }
+    
+    // GENERIC GETTERS
+    public Node get_previous() { return this.previous; }
+    public double get_fcost() { return this.fcost; }
+    public double get_gcost() { return this.gcost; }
+    public String get_name() { return this.name; }
+    public double get_latitude() { return this.latitude; }
+    public double get_longitude() { return this.longitude; }
+    
+    // GET ALL & ADD CHILDREN
+    public ArrayList<Node> get_children() { return this.children; }
+    public void add_child(Node node) { this.children.add(node); }
 }

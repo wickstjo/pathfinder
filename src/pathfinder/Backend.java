@@ -63,7 +63,7 @@ public class Backend {
         Node child_node = get_node(_child);
         
         // ADD THE NODE CHILD
-        parent_node.waypoints.add(child_node);
+        parent_node.add_child(child_node);
     }
     
     // GETTERS

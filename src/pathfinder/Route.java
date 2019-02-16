@@ -2,7 +2,6 @@ package pathfinder;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.PriorityQueue;
 
 public class Route {
@@ -11,11 +10,8 @@ public class Route {
     private final Node beginning;
     private final Node ending;
     
-    // THE FINALIZED ROUTE
-    private final ArrayList<String> finalized = new ArrayList();
-    
-    // COST SHORTHANDS
-    double gcost, hcost, tentative_g;
+    // THE FINALIZED ROUTE RESULT
+    private ArrayList<String> result = new ArrayList();
     
     // CONSTRUCTOR
     public Route(Backend _backend, String _from, String _to) {
@@ -35,17 +31,16 @@ public class Route {
         PriorityQueue<Node> queue = new PriorityQueue(new compare()); 
         ArrayList<Node> blacklist = new ArrayList();
         
-        // INITIALIZE HASHMAPS
-        HashMap<Node, Node> route = new HashMap();
-        ArrayList<Node> testing = new ArrayList();
+        // REUSABLE COST VARS FOR READABILITY
+        double gcost, hcost, tentative_g;
         
-        // FIND THE COSTS
+        // FIND THE COSTS FOR THE FIRST NODE
         gcost = distance(this.beginning, this.beginning);
         hcost = distance(this.beginning, this.ending);
         
-        // SET THE THEM
-        this.beginning.gcost = gcost;
-        this.beginning.fcost = gcost + hcost;
+        // SET THEM IN THE OBJECT
+        this.beginning.set_gcost(gcost);
+        this.beginning.set_fcost(gcost + hcost);
         
         // ADD THE FIRST NODE TO THE QUEUE
         queue.add(this.beginning);
@@ -53,7 +48,7 @@ public class Route {
         // LOOP UNTIL THE QUEUE IS EMPTY
         while (!queue.isEmpty()) {
             
-            // SELECT NODE WITH LOWEST FCOST, THEN REMOTE IT
+            // SELECT, THEN REMOVE THE NODE WITH THE LOWEST FCOST IN THE QUEUE
             Node parent_target = queue.poll();
             
             // BREAK THE LOOP IF ITS THE GOAL
@@ -62,45 +57,38 @@ public class Route {
                 break;
             }
             
-            // BLACKLIST IT
+            // BLACKLIST THE PARENT TO PREVENT RE-EXPLORATION
             blacklist.add(parent_target);
             
-            // FETCH ITS CHILD NODES
-            ArrayList<Node> child_nodes = parent_target.waypoints;
-            
-            // LOOP THROUGH THEM
-            for (Node child_target : child_nodes) {
+            // LOOP THROUGH ITS CHILDREN
+            for (Node child_target : parent_target.get_children()) {
                 
                 // CHECK IF THE CHILD IS BLACKLISTED
                 if (!blacklist.contains(child_target)) {
                     
-                    // FIND TENTATIVE- & HCOST
-                    tentative_g = parent_target.gcost + distance(parent_target, child_target);
-                    hcost = distance(child_target, this.ending);
+                    // FIND TENTATIVE G-COST
+                    tentative_g = parent_target.get_gcost() + distance(parent_target, child_target);
                     
                     // IF THE CHILD ISNT ALREADY QUEUED
                     if (!queue.contains(child_target)) {
                         
-                        // SET CHILDS VALUES
-                        child_target.gcost = tentative_g;
-                        child_target.fcost = tentative_g + hcost;
+                        // FIND THE H-COST
+                        hcost = distance(child_target, this.ending);
+                        
+                        // SET CHILD NODE VALUES
+                        child_target.set_gcost(tentative_g);
+                        child_target.set_fcost(tentative_g + hcost);
                         
                         // ADD TO THE QUEUE
                         queue.add(child_target);
-                        
-                    // IF THE NEW FCOST IS HIGHER THAN THE PREVIOIS
-                    } else if (tentative_g >= child_target.gcost)
-                        continue;
+                    }
                     
-                    child_target.previous = parent_target;
-
-                    // RECALIBRATE VALUES
-                    child_target.gcost = tentative_g;
-                    child_target.fcost = tentative_g + hcost;
-
-                    // RECALIBRATE THE QUEUE
-                    queue.remove(child_target);
-                    queue.add(child_target);
+                    // IF THE TENTATIVE G-COST IS LOWER THAN THE EXISTING ONE
+                    if (tentative_g <= child_target.get_gcost()) {
+                        
+                        // ADD THE PARENT AS ITS PREDICESSOR
+                        child_target.set_previous(parent_target);
+                    }
                 }
             }
         }
@@ -113,12 +101,12 @@ public class Route {
     private double distance(Node _from, Node _to) {
         
         // CONVERT LONGITUDES TO RADIANS
-        double longitude_from = to_radian(_from.longitude);
-        double longitude_to = to_radian(_to.longitude);
+        double longitude_from = to_radian(_from.get_longitude());
+        double longitude_to = to_radian(_to.get_longitude());
         
         // CONVERT LATITUDES TO RADIANS
-        double latitude_from = to_radian(_from.latitude);
-        double latitude_to = to_radian(_to.latitude);
+        double latitude_from = to_radian(_from.get_latitude());
+        double latitude_to = to_radian(_to.get_latitude());
         
         // FIND THE DIFFERENCE & CONVERT NEGATIVES INTO POSITIVES
         double longitude = longitude_from - longitude_to;
@@ -135,35 +123,27 @@ public class Route {
     // PRINT ROUTE SUMMARY
     private void summary(Node current) {
         
-        ArrayList<String> fin = new ArrayList();
-        fin.add(current.name);
+        // CREATE A TEMP LIST & ADD THE FIRST ELEMENT
+        ArrayList<String> temp = new ArrayList();
+        temp.add(current.get_name());
         
-        while (current.previous != null) {
-            fin.add(current.previous.name);
-            current = current.previous;
+        // WHILE THERE IS A PREDICESSOR
+        while (current.get_previous() != null) {
+            
+            // ADD THE NODE & KEEP DELVING
+            temp.add(current.get_previous().get_name());
+            current = current.get_previous();
         }
         
-        Collections.reverse(fin);
-        log(fin);
-        
-//        log("----");
-//        
-//        // ADD THE FIRST NODE TO THE FINALIZED LIST
-//        finalized.add(this.beginning.get_name());
-//           
-//        // ADD THE GENERATED NODES
-//        for (Node node : route.keySet()) {
-//           finalized.add(node.get_name());
-//        }
-//        
-//        // ADD THE LAST NODE
-//        finalized.add(this.ending.get_name());
+        // REVERSE & SET IT
+        Collections.reverse(temp);
+        this.result = temp;
     }
 
-    // GET THE PATH
-    public ArrayList<String> get_path() { return this.finalized; }
+    // GET THE ROUTE RESULT
+    public ArrayList<String> get_result() { return this.result; }
     
-    // PRIORITY QUEUE SORTER
+    // PRIORITY QUEUE COMPARATOR
     class compare implements Comparator<Node> {
 
         // OVERRIDE THE DEFAULT COMPARE METHOD
@@ -173,18 +153,15 @@ public class Route {
             Integer response = 0;
             
             // MOVE ELEMENT FORWARD
-            if (first.fcost > second.fcost) {
+            if (first.get_fcost() > second.get_fcost()) {
                 response = 1;
             
             // MOVE ELEMENT BACKWARD
-            } else if (first.fcost < second.fcost) {
+            } else if (first.get_fcost() < second.get_fcost()) {
                 response = -1;
             }
             
             return response;
         }
     }
-    
-    // SHORTHAND FOR DEBUGGING
-    public void log(Object content) { System.out.println(content); }
 }

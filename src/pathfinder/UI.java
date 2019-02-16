@@ -27,11 +27,11 @@ public class UI {
             log(parent_city.toUpperCase());
             
             // FETCH THE CHILD NODES
-            ArrayList<Node> child_nodes = parent_node.waypoints;
+            ArrayList<Node> child_nodes = parent_node.get_children();
             
             // LOOP THROUGH THE CHILDREN & PRINT ITS NAME
             for (Node child_node : child_nodes) {
-                log("\u00A0\u00A0> " + child_node.name.toUpperCase());
+                log("\u00A0\u00A0> " + child_node.get_name().toUpperCase());
             }
             
             // LOG AN EMPTY LINE FOR AESTHETICAL PURPOSES
@@ -52,7 +52,7 @@ public class UI {
       
         // GENERATE A ROUTE & FETCH IT
         Route route = new Route(backend, from, to); 
-        ArrayList<String> result = route.get_path();
+        ArrayList<String> result = route.get_result();
         
         log(result);
     }
