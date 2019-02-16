@@ -1,5 +1,6 @@
 package pathfinder;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.PriorityQueue;
@@ -10,11 +11,11 @@ public class Route {
     private final Node beginning;
     private final Node ending;
     
-    // TEMPLATE HASHMAP FOR ROUTING
-    private final HashMap<Node, Double> template;
-    
     // THE FINALIZED ROUTE
     private final ArrayList<String> finalized = new ArrayList();
+    
+    // COST SHORTHANDS
+    double gcost, hcost, tentative_g;
     
     // CONSTRUCTOR
     public Route(Backend _backend, String _from, String _to) {
@@ -22,9 +23,6 @@ public class Route {
         // FIND & SET FIRST & LAST NODES
         this.beginning = _backend.get_node(_from);
         this.ending = _backend.get_node(_to);
-        
-        // GENERATE TEMPLATE HASHMAP
-        this.template = _backend.generate_template();
         
         // START THE PATHFINGINDER
         find_route();
@@ -39,12 +37,15 @@ public class Route {
         
         // INITIALIZE HASHMAPS
         HashMap<Node, Node> route = new HashMap();
-        HashMap<Node, Double> g_costs = this.template;
-        HashMap<Node, Double> f_costs = this.template;
+        ArrayList<Node> testing = new ArrayList();
         
-        // SET THE COSTS FOR FIRST NODE
-        g_costs.put(this.beginning, 0.0);
-        f_costs.put(this.beginning, distance(this.beginning, this.ending));
+        // FIND THE COSTS
+        gcost = distance(this.beginning, this.beginning);
+        hcost = distance(this.beginning, this.ending);
+        
+        // SET THE THEM
+        this.beginning.gcost = gcost;
+        this.beginning.fcost = gcost + hcost;
         
         // ADD THE FIRST NODE TO THE QUEUE
         queue.add(this.beginning);
@@ -57,7 +58,7 @@ public class Route {
             
             // BREAK THE LOOP IF ITS THE GOAL
             if (parent_target == this.ending) {
-                summary(route);
+                summary(parent_target);
                 break;
             }
             
@@ -65,7 +66,7 @@ public class Route {
             blacklist.add(parent_target);
             
             // FETCH ITS CHILD NODES
-            ArrayList<Node> child_nodes = parent_target.get_waypoints();
+            ArrayList<Node> child_nodes = parent_target.waypoints;
             
             // LOOP THROUGH THEM
             for (Node child_target : child_nodes) {
@@ -73,35 +74,33 @@ public class Route {
                 // CHECK IF THE CHILD IS BLACKLISTED
                 if (!blacklist.contains(child_target)) {
                     
-                    // CALCULATE THE TENTATIVE COST
-                    double tentative_cost = g_costs.get(parent_target) + distance(parent_target, child_target);
+                    // FIND TENTATIVE- & HCOST
+                    tentative_g = parent_target.gcost + distance(parent_target, child_target);
+                    hcost = distance(child_target, this.ending);
                     
                     // IF THE CHILD ISNT ALREADY QUEUED
                     if (!queue.contains(child_target)) {
                         
-                        // FIND & INJECT THE FCOST TO THE NODE
-                        child_target.set_cost(tentative_cost);
+                        // SET CHILDS VALUES
+                        child_target.gcost = tentative_g;
+                        child_target.fcost = tentative_g + hcost;
                         
-                        // ADD IT TO THE QUEUE
+                        // ADD TO THE QUEUE
                         queue.add(child_target);
                         
-                    // IF IT IS QUEUED
-                    } else if (tentative_cost >= g_costs.get(child_target)) {
-                        
-                        // ADD IT TO THE ROUTE MAP
-                        route.put(child_target, parent_target);
-                        
-                        // REPLACE OLD G/F VALUES
-                        g_costs.put(child_target, tentative_cost);
-                        f_costs.put(child_target, g_costs.get(child_target) + distance(child_target, this.ending));
-                        
-                        // https://github.com/phishman3579/java-algorithms-implementation/blob/master/src/com/jwetherell/algorithms/graph/AStar.java
-                        
-                        // REMOVE NODE FROM QUEUE, THEN REMOVE & INJECT IT AGAIN WITH THE NEW FCOST
-                        queue.remove(child_target);
-                        child_target.set_cost(f_costs.get(child_target));
-                        queue.add(child_target);
-                    }
+                    // IF THE NEW FCOST IS HIGHER THAN THE PREVIOIS
+                    } else if (tentative_g >= child_target.gcost)
+                        continue;
+                    
+                    child_target.previous = parent_target;
+
+                    // RECALIBRATE VALUES
+                    child_target.gcost = tentative_g;
+                    child_target.fcost = tentative_g + hcost;
+
+                    // RECALIBRATE THE QUEUE
+                    queue.remove(child_target);
+                    queue.add(child_target);
                 }
             }
         }
@@ -114,12 +113,12 @@ public class Route {
     private double distance(Node _from, Node _to) {
         
         // CONVERT LONGITUDES TO RADIANS
-        double longitude_from = to_radian(_from.get_longitude());
-        double longitude_to = to_radian(_to.get_longitude());
+        double longitude_from = to_radian(_from.longitude);
+        double longitude_to = to_radian(_to.longitude);
         
         // CONVERT LATITUDES TO RADIANS
-        double latitude_from = to_radian(_from.get_latitude());
-        double latitude_to = to_radian(_to.get_latitude());
+        double latitude_from = to_radian(_from.latitude);
+        double latitude_to = to_radian(_to.latitude);
         
         // FIND THE DIFFERENCE & CONVERT NEGATIVES INTO POSITIVES
         double longitude = longitude_from - longitude_to;
@@ -134,20 +133,34 @@ public class Route {
     }
     
     // PRINT ROUTE SUMMARY
-    private void summary(HashMap<Node, Node> route) {
-  
-        // ADD THE FIRST NODE TO THE FINALIZED LIST
-        finalized.add(this.beginning.get_name());
-           
-        // ADD THE GENERATED NODES
-        for (Node node : route.keySet()) {
-           finalized.add(node.get_name());
+    private void summary(Node current) {
+        
+        ArrayList<String> fin = new ArrayList();
+        fin.add(current.name);
+        
+        while (current.previous != null) {
+            fin.add(current.previous.name);
+            current = current.previous;
         }
         
-        // ADD THE LAST NODE
-        finalized.add(this.ending.get_name());
+        Collections.reverse(fin);
+        log(fin);
+        
+//        log("----");
+//        
+//        // ADD THE FIRST NODE TO THE FINALIZED LIST
+//        finalized.add(this.beginning.get_name());
+//           
+//        // ADD THE GENERATED NODES
+//        for (Node node : route.keySet()) {
+//           finalized.add(node.get_name());
+//        }
+//        
+//        // ADD THE LAST NODE
+//        finalized.add(this.ending.get_name());
     }
 
+    // GET THE PATH
     public ArrayList<String> get_path() { return this.finalized; }
     
     // PRIORITY QUEUE SORTER
@@ -160,15 +173,18 @@ public class Route {
             Integer response = 0;
             
             // MOVE ELEMENT FORWARD
-            if (first.get_cost() > second.get_cost()) {
+            if (first.fcost > second.fcost) {
                 response = 1;
             
             // MOVE ELEMENT BACKWARD
-            } else if (first.get_cost() < second.get_cost()) {
+            } else if (first.fcost < second.fcost) {
                 response = -1;
             }
             
             return response;
         }
     }
+    
+    // SHORTHAND FOR DEBUGGING
+    public void log(Object content) { System.out.println(content); }
 }

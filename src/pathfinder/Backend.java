@@ -63,20 +63,7 @@ public class Backend {
         Node child_node = get_node(_child);
         
         // ADD THE NODE CHILD
-        parent_node.add_waypoint(child_node);
-    }
-    
-    // GENERATE A GENERIC HASHMAP FOR ASTAR
-    public HashMap<Node, Double> generate_template() {
-        
-        HashMap<Node, Double> temp = new HashMap<>();
-        
-        for (Node node : this.nodes.values()) {
-            
-            temp.put(node, Double.POSITIVE_INFINITY);
-        }
-        
-        return temp;
+        parent_node.waypoints.add(child_node);
     }
     
     // GETTERS

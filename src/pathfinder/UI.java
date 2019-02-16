@@ -27,11 +27,11 @@ public class UI {
             log(parent_city.toUpperCase());
             
             // FETCH THE CHILD NODES
-            ArrayList<Node> child_nodes = parent_node.get_waypoints();
+            ArrayList<Node> child_nodes = parent_node.waypoints;
             
             // LOOP THROUGH THE CHILDREN & PRINT ITS NAME
             for (Node child_node : child_nodes) {
-                log("\u00A0\u00A0> " + child_node.get_name().toUpperCase());
+                log("\u00A0\u00A0> " + child_node.name.toUpperCase());
             }
             
             // LOG AN EMPTY LINE FOR AESTHETICAL PURPOSES
@@ -43,8 +43,8 @@ public class UI {
     public void query() {
         
         // START & END NODES
-        String from = "jyvaskyla";
-        String to = "kuopio";
+        String from = "helsinki";
+        String to = "jyvaskyla";
         
         // LOG THEM FOR CLARITY
         log("FROM:\t" + from);
