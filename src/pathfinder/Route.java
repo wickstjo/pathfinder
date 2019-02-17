@@ -70,27 +70,19 @@ public class Route {
                     tentative_g = parent_target.get_gcost() + distance(parent_target, child_target);
                     hcost = distance(child_target, this.ending);
                     
-                    // IF THE CHILD ISNT ALREADY QUEUED
-                    if (!queue.contains(child_target)) {
-                        
-                        // SET CHILD NODE COSTS
-                        child_target.set_gcost(tentative_g);
-                        child_target.set_fcost(tentative_g + hcost);
-                        
-                        // ADD TO THE QUEUE
-                        queue.add(child_target);
-                    }
-                    
                     // IF THE TENTATIVE G-COST IS LOWER THAN THE EXISTING ONE
                     if (tentative_g <= child_target.get_gcost()) {
                         
-                        // ADD THE PARENT AS ITS PREDICESSOR
+                        // ADD THE PARENT AS THE CHILDS PREDICESSOR
                         child_target.set_previous(parent_target);
                         
-                        // UPDATE CHILD NODE COSTS
+                        // ADD/UPDATE CHILD NODE COSTS
                         child_target.set_gcost(tentative_g);
                         child_target.set_fcost(tentative_g + hcost);
                     }
+                    
+                    // IF THE CHILD ISNT QUEUED ALREADY, ADD IT
+                    if (!queue.contains(child_target)) { queue.add(child_target); }
                 }
             }
         }
