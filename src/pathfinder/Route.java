@@ -51,6 +51,8 @@ public class Route {
             // SELECT, THEN REMOVE THE NODE WITH THE LOWEST FCOST IN THE QUEUE
             Node parent_target = queue.poll();
             
+            System.out.println(parent_target.get_name() + " => " + parent_target.get_gcost());
+            
             // BREAK THE LOOP IF ITS THE GOAL
             if (parent_target == this.ending) {
                 summary(parent_target);
@@ -73,10 +75,10 @@ public class Route {
                     // IF THE TENTATIVE G-COST IS LOWER THAN THE EXISTING ONE
                     if (tentative_g <= child_target.get_gcost()) {
                         
-                        // ADD THE PARENT AS THE CHILDS PREDICESSOR
+                        // SET THE PARENT AS THE CHILDS PREDICESSOR
                         child_target.set_previous(parent_target);
                         
-                        // ADD/UPDATE CHILD NODE COSTS
+                        // UPDATE CHILDS NODE COSTS
                         child_target.set_gcost(tentative_g);
                         child_target.set_fcost(tentative_g + hcost);
                     }
