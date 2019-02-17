@@ -51,8 +51,6 @@ public class Route {
             // SELECT, THEN REMOVE THE NODE WITH THE LOWEST FCOST IN THE QUEUE
             Node parent_target = queue.poll();
             
-            System.out.println(parent_target.get_name());
-            
             // BREAK THE LOOP IF ITS THE GOAL
             if (parent_target == this.ending) {
                 summary(parent_target);
