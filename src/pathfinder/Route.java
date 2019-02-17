@@ -42,7 +42,6 @@ public class Route {
         this.beginning.set_gcost(gcost);
         this.beginning.set_fcost(gcost + hcost);
         
-        
         // ADD THE FIRST NODE TO THE QUEUE
         queue.add(this.beginning);
         
@@ -51,6 +50,8 @@ public class Route {
             
             // SELECT, THEN REMOVE THE NODE WITH THE LOWEST FCOST IN THE QUEUE
             Node parent_target = queue.poll();
+            
+            System.out.println(parent_target.get_name());
             
             // BREAK THE LOOP IF ITS THE GOAL
             if (parent_target == this.ending) {
@@ -67,16 +68,14 @@ public class Route {
                 // CHECK IF THE CHILD IS BLACKLISTED
                 if (!blacklist.contains(child_target)) {
                     
-                    // FIND TENTATIVE G-COST
+                    // FIND TENTATIVE G-COST & H-COST
                     tentative_g = parent_target.get_gcost() + distance(parent_target, child_target);
+                    hcost = distance(child_target, this.ending);
                     
                     // IF THE CHILD ISNT ALREADY QUEUED
                     if (!queue.contains(child_target)) {
                         
-                        // FIND THE H-COST
-                        hcost = distance(child_target, this.ending);
-                        
-                        // SET CHILD NODE VALUES
+                        // SET CHILD NODE COSTS
                         child_target.set_gcost(tentative_g);
                         child_target.set_fcost(tentative_g + hcost);
                         
@@ -89,6 +88,10 @@ public class Route {
                         
                         // ADD THE PARENT AS ITS PREDICESSOR
                         child_target.set_previous(parent_target);
+                        
+                        // UPDATE CHILD NODE COSTS
+                        child_target.set_gcost(tentative_g);
+                        child_target.set_fcost(tentative_g + hcost);
                     }
                 }
             }
